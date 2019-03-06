@@ -1,4 +1,6 @@
 const indexFile = require('./indexFile')
 
-var obj = new indexFile
-obj.test()
+var index = new indexFile
+index.extractWords()
+index.buildIndex()
+index.test()

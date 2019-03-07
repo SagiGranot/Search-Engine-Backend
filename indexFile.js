@@ -2,27 +2,28 @@ const fs =  require('fs')
 const hashmap = require('hashmap')
 const TEMP_DIR = './tmp'
 const SRC_DIR = './src'
-var docID = 1000;
+
 
 module.exports = class indexFile{
     constructor(){
         this.map = new hashmap()
         this.words = [];
+        this.docID = 1000;
     }
     extractWords(){
         let data = fs.readdirSync(TEMP_DIR)
         data.forEach(file => {
             let parsed = fs.readFileSync(TEMP_DIR+'/'+file, 'utf-8')
-            fs.rename(TEMP_DIR+'/'+file, SRC_DIR+'/'+(docID)+'.txt', (err)=> {
+            fs.rename(TEMP_DIR+'/'+file, SRC_DIR+'/'+(this.docID)+'.txt', (err)=> {
                 if(err) throw err
                 console.log("File: "+file+" moved to /src")
             })
             parsed = parsed.toString().toLowerCase()
             let seder = parsed.match(/[a-zA-Z]+/g)
             seder.forEach(sed => {
-                this.words.push({term: sed, id: docID+'.txt', tf:1})
+                this.words.push({term: sed, id: this.docID+'.txt', tf:1})
             });  
-            docID++;
+            this.docID++;
         })
         this.words.sort((a,b) => {
             if(a.term < b.term)
@@ -81,6 +82,7 @@ module.exports = class indexFile{
     }
 
     test(){
-            console.log(this.map.get("another"))  
+        console.log(this.map.get("fields"))    
+            
     }
 }

@@ -10,6 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.16.4",
     "hashmap": "^2.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
   }
 }

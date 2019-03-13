@@ -35,12 +35,32 @@ app.get('/search/:query',(req,res) => {
         })
     }
     //
-    console.log(index.summaries)
+    let results = []
     seder.forEach(term => {
         let obj = index.map.get(term)
-        // console.log(obj)
+        if (obj){
+        obj.locations.forEach(location => {
+            let x = 0
+            results.forEach(result => {
+                if(result.id === location.id){
+                    return
+                }
+                else{
+                    x++
+                }
+            })
+            if (x === results.length){
+                let temp = location.id.replace(/\D/g,'')
+                let summaryIndex = Number(temp) - 1000
+
+                results.push({id: location.id, summary:index.summaries[summaryIndex]})
+            }
+            
+        })
+        }
     })
     
+    console.log(results)
     res.send('OK')
 
 })

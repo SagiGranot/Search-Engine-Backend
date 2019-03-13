@@ -11,20 +11,26 @@ module.exports = class indexFile{
         this.docID = 1000;
     }
     extractWords(){
+        //Read tmp directory to get new documents
         let data = fs.readdirSync(TEMP_DIR)
         data.forEach(file => {
+            //Read a document
             let parsed = fs.readFileSync(TEMP_DIR+'/'+file, 'utf-8')
+            //Move document into src directory
             fs.rename(TEMP_DIR+'/'+file, SRC_DIR+'/'+(this.docID)+'.txt', (err)=> {
                 if(err) throw err
                 console.log("File: "+file+" moved to /src")
             })
+            //Format data and keep only words.
             parsed = parsed.toString().toLowerCase()
             let seder = parsed.match(/[a-zA-Z]+/g)
+            //Build words array
             seder.forEach(sed => {
                 this.words.push({term: sed, id: this.docID+'.txt', tf:1})
             });  
             this.docID++;
         })
+        //Proccess words array and remove duplicates
         this.words.sort((a,b) => {
             if(a.term < b.term)
                 return -1
@@ -47,6 +53,10 @@ module.exports = class indexFile{
         
     }
     buildIndex(){
+        //Use words array from extractWords() to build hashmap index
+        //Words array is sorted alphabetically
+        //
+        //Index holds data for each word -> how many documents has it, and an array with the location id, tf etc.
         let counter = 1
         for(let i=0; i<this.words.length-1; i++)
         {
@@ -55,6 +65,9 @@ module.exports = class indexFile{
             counter = 1
             let array = []
             while(this.words[i].term === this.words[j++].term){
+                //This while loop eliminates word duplicates
+                //all duplicated words are converted into one object
+                //this object has (per word)  - #of docs and locations array
                counter++ 
                array.push({id: this.words[y].id, tf: this.words[y].tf, disabled: false})
                y++

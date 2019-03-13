@@ -24,6 +24,7 @@ app.get('/search/:query',(req,res) => {
     const stopList = ["the", "a", "is", "to", "in", "at"]
     let temp = query.toString().toLowerCase()
     let seder = temp.match(/[a-zA-Z()+-/"]+/g)
+    //Remove StopList words from query
     for(let i=0; i<seder.length; i++){
         stopList.forEach(word => {
             if(seder[i]===word){
@@ -34,8 +35,10 @@ app.get('/search/:query',(req,res) => {
         })
     }
     //
+    console.log(seder)
     seder.forEach(term => {
-        console.log(index.map.get(term))
+        let obj = index.map.get(term)
+        console.log(obj.locations)
     })
     
     res.send('OK')

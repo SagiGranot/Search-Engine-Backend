@@ -8,6 +8,7 @@ module.exports = class indexFile{
     constructor(){
         this.map = new hashmap()
         this.words = [];
+        this.summaries = [];
         this.docID = 1000;
     }
     extractWords(){
@@ -16,6 +17,7 @@ module.exports = class indexFile{
         data.forEach(file => {
             //Read a document
             let parsed = fs.readFileSync(TEMP_DIR+'/'+file, 'utf-8')
+            this.summaries.push(parsed.replace(/\r?\n|\r/g," ").substring(0,150).trim()+"...")
             //Move document into src directory
             fs.rename(TEMP_DIR+'/'+file, SRC_DIR+'/'+(this.docID)+'.txt', (err)=> {
                 if(err) throw err

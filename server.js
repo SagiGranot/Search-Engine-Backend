@@ -35,10 +35,10 @@ app.get('/search/:query',(req,res) => {
         })
     }
     //
-    console.log(seder)
+    console.log(index.summaries)
     seder.forEach(term => {
         let obj = index.map.get(term)
-        console.log(obj)
+        // console.log(obj)
     })
     
     res.send('OK')

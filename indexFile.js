@@ -26,7 +26,7 @@ module.exports = class indexFile{
             let seder = parsed.match(/[a-zA-Z]+/g)
             //Build words array
             seder.forEach(sed => {
-                this.words.push({term: sed, id: this.docID+'.txt', tf:1})
+                this.words.push({term: sed, id: this.docID+'.txt', tf:1, _tf: 0})
             });  
             this.docID++;
         })
@@ -49,6 +49,7 @@ module.exports = class indexFile{
                 }
                 else j++ 
             }
+            this.words[i]._tf = 1+Math.log(this.words[i].tf)
         }
         
     }
@@ -73,8 +74,9 @@ module.exports = class indexFile{
                y++
             }
             array.push({id: this.words[y].id, tf: this.words[y].tf, disabled: false})
-
-            this.map.set(this.words[i].term, {docs: counter, locations:array})
+            let N = this.docID - 1000
+            let Weight =  this.words[i]._tf * (Math.log(N/counter)) // (_tf * idf)
+            this.map.set(this.words[i].term, {weight: Weight, docs: counter, locations:array})
             if (counter > 1)
                 i += counter -1    
         }
@@ -94,8 +96,4 @@ module.exports = class indexFile{
         }
     }
 
-    test(){
-        console.log(this.map.get("fields"))    
-            
-    }
 }

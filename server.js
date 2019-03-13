@@ -38,7 +38,7 @@ app.get('/search/:query',(req,res) => {
     console.log(seder)
     seder.forEach(term => {
         let obj = index.map.get(term)
-        console.log(obj.locations)
+        console.log(obj)
     })
     
     res.send('OK')

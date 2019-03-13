@@ -91,7 +91,9 @@ module.exports = class indexFile{
                 obj.locations.push({id: this.words[i].id, tf: this.words[i].tf, disabled: false})
            } 
            else{
-                this.map.set(this.words[i].term, {docs: 1, locations: [{id: this.words[i].id, tf: this.words[i].tf}]})
+                let N = this.docID - 1000
+                let Weight =  this.words[i]._tf * (Math.log(N/obj.docs)) // (_tf * idf)
+                this.map.set(this.words[i].term, {weight: Weight,docs: 1, locations: [{id: this.words[i].id, tf: this.words[i].tf}]})
            }
         }
     }

@@ -38,11 +38,14 @@ app.get('/search/:query',(req,res) => {
     let results = []
     seder.forEach(term => {
         let obj = index.map.get(term)
+        console.log(obj)
         if (obj){
+        let w = obj.weight
         obj.locations.forEach(location => {
-            let x = 0
+            let x = 0            
             results.forEach(result => {
                 if(result.id === location.id){
+                    result.weight += w
                     return
                 }
                 else{
@@ -53,13 +56,20 @@ app.get('/search/:query',(req,res) => {
                 let temp = location.id.replace(/\D/g,'')
                 let summaryIndex = Number(temp) - 1000
 
-                results.push({id: location.id, summary:index.summaries[summaryIndex]})
+                results.push({id: location.id,weight: w,summary:index.summaries[summaryIndex]})
             }
             
         })
         }
     })
-    
+    //Sort results by weight
+    results.sort((a,b) => {
+        if(a.weight > b.weight)
+            return -1
+        if(a.weight < b.weight)
+            return 1
+        else return 0
+    })
     console.log(results)
     res.send('OK')
 

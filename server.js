@@ -34,6 +34,52 @@ app.get('/search/:query',(req,res) => {
             }
         })
     }
+    //opNot contains: all documents which are to be ignored
+    //opAnd contains: the only documents to be displayed
+    let opNot = []
+    let opAnd = []
+    seder.forEach((term, i) => {
+        if (term.indexOf('-') > -1){
+            seder[i] = term.replace('-','')
+            let obj = index.map.get(seder[i])
+            if (obj){
+                obj.locations.forEach(location => {
+                    opNot.push(location.id)
+                })
+            }
+            else{
+                console.error("The term '"+seder[i]+"' is not in the index")
+            }
+        }
+    })
+    for(let i=0; i<opNot.length; ++i) {
+        for(let j=i+1; j<opNot.length; ++j) {
+            if(opNot[i] === opNot[j])
+                opNot.splice(j--, 1);
+        }
+    }
+    seder.forEach((term, i) => {
+        if (term.indexOf('+') > -1){
+            seder[i] = term.replace('+','')
+            let obj = index.map.get(seder[i])
+            if (obj){
+                obj.locations.forEach(location => {
+                    opAnd.push(location.id)
+                })
+            }
+            else{
+                console.error("The term '"+seder[i]+"' is not in the index")
+            }
+        }
+    })
+    for(let i=0; i<opAnd.length; ++i) {
+        for(let j=i+1; j<opAnd.length; ++j) {
+            if(opAnd[i] === opAnd[j])
+                opAnd.splice(j--, 1);
+        }
+    }
+    console.log(opAnd)
+    console.log(opNot)
     //Build results array
     let results = []
     seder.forEach(term => {
@@ -66,6 +112,31 @@ app.get('/search/:query',(req,res) => {
         })
         }
     })
+    //Clean results from not operator
+    opNot.forEach(doc => {
+        results.forEach((result, i) => {
+            if (result.id === doc){
+                results.splice(i,1)
+                console.log(doc + ' was miscluded!')
+            }
+        })
+    })
+    //Apply the and operator
+    if(opAnd.length > 0){
+        results.forEach((result,i) => {
+            let counter = 0
+            opAnd.forEach(doc => {
+                if (result.id !== doc){
+                    counter++
+                }
+            })
+            if ((counter === opAnd.length)&&(counter>0)){
+                console.log(results[i].id + ' was miscluded!')
+                results.splice(i,1)
+            }
+
+        })
+    }
     //Sort results by weight
     results.sort((a,b) => {
         if(a.weight > b.weight)
@@ -74,7 +145,9 @@ app.get('/search/:query',(req,res) => {
             return 1
         else return 0
     })
-    console.log(results)
+    //console.log(results)
+    opAnd = []
+    opNot = []
     res.json(results)
 
 })

@@ -61,19 +61,21 @@ module.exports = class indexFile{
         //
         //Index holds data for each word -> how many documents has it, and an array with the location id, tf etc.
         let counter = 1
-        for(let i=0; i<this.words.length-1; i++)
+        for(let i=0; i<this.words.length; i++)
         {
             let j = i + 1
             let y = i
             counter = 1
             let array = []
-            while(this.words[i].term === this.words[j++].term){
-                //This while loop eliminates word duplicates
-                //all duplicated words are converted into one object
-                //this object has (per word)  - #of docs and locations array
-               counter++ 
-               array.push({id: this.words[y].id, tf: this.words[y].tf, disabled: false})
-               y++
+            if (j < this.words.length-1){
+                while(this.words[i].term === this.words[j++].term){
+                    //This while loop eliminates word duplicates
+                    //all duplicated words are converted into one object
+                    //this object has (per word)  - #of docs and locations array
+                counter++ 
+                array.push({id: this.words[y].id, tf: this.words[y].tf, disabled: false})
+                y++
+                }
             }
             array.push({id: this.words[y].id, tf: this.words[y].tf, disabled: false})
             let N = this.docID - 1000

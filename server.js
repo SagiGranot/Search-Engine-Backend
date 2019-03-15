@@ -34,7 +34,7 @@ app.get('/search/:query',(req,res) => {
             }
         })
     }
-    //
+    //Build results array
     let results = []
     seder.forEach(term => {
         let obj = index.map.get(term)
@@ -42,9 +42,11 @@ app.get('/search/:query',(req,res) => {
         if (obj){
         let w = obj.weight
         obj.locations.forEach(location => {
-            let x = 0            
+            let x = 0 
+            //Check if this location already exists in the results array
             results.forEach(result => {
                 if(result.id === location.id){
+                    //if it does, add this obj weight to the relevant result.
                     result.weight += w
                     return
                 }
@@ -52,7 +54,9 @@ app.get('/search/:query',(req,res) => {
                     x++
                 }
             })
+            //The next statement is true if results array doesn't contain this object location
             if (x === results.length){
+                //Add location to results
                 let temp = location.id.replace(/\D/g,'')
                 let summaryIndex = Number(temp) - 1000
 
@@ -71,7 +75,7 @@ app.get('/search/:query',(req,res) => {
         else return 0
     })
     console.log(results)
-    res.send('OK')
+    res.json(results)
 
 })
 

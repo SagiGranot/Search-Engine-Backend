@@ -1,6 +1,8 @@
 const indexFile = require('./indexFile')
 const express   = require('express')
-
+const fs =  require('fs')
+const TEMP_DIR = './tmp'
+const SRC_DIR = './src'
 var index = new indexFile
 index.extractWords()
 index.buildIndex()
@@ -151,6 +153,20 @@ app.get('/search/:query',(req,res) => {
     res.json(results)
 
 })
+
+app.get('/view/:id/:query',(req,res) => {
+    const { id = null, query = null } = req.params
+    let data = fs.readFileSync(SRC_DIR+'/'+id, 'utf-8')
+    let temp = query.toString().toLowerCase()
+    let seder = temp.match(/[a-zA-Z]+/g)
+    console.log(seder)
+    seder.forEach(term => {
+        data = data.replace(term,"<b>"+term+"</b>")
+    })
+    res.send(data)
+})
+
+
 
  app.listen(port,
     () => console.log(`listening on port ${port}`));

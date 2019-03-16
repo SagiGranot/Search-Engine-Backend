@@ -148,7 +148,6 @@ function search(query){
             return 1
         else return 0
     })
-    //console.log(results)
     opAnd = []
     opNot = []
     
@@ -232,8 +231,8 @@ app.get('/search/:query',(req,res) => {
 
     query = queryPriority(query)
     query.forEach(term => {
-        console.log(term)
-        results = [...search(term)]
+        let arr = search(term)
+        results = results.concat(arr)
     })
 
 

@@ -12,6 +12,7 @@ module.exports = class indexFile{
         this.docID = 1000;
     }
     extractWords(){
+        this.words = []
         //Read tmp directory to get new documents
         let data = fs.readdirSync(TEMP_DIR)
         data.forEach(file => {
@@ -96,7 +97,7 @@ module.exports = class indexFile{
            } 
            else{
                 let N = this.docID - 1000
-                let Weight =  this.words[i]._tf * (Math.log(N/obj.docs)) // (_tf * idf)
+                let Weight =  this.words[i]._tf * (Math.log(N/1)) // (_tf * idf)
                 this.map.set(this.words[i].term, {weight: Weight,docs: 1, locations: [{id: this.words[i].id, tf: this.words[i].tf}]})
            }
         }

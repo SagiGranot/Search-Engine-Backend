@@ -1,14 +1,44 @@
 const indexFile = require('./indexFile')
 const express   = require('express')
 const fs =  require('fs')
+const multer = require('multer');
+const cors = require('cors');
 const TEMP_DIR = './tmp'
 const SRC_DIR = './src'
+
 var index = new indexFile
 index.extractWords()
 index.buildIndex()
 
 const app  = express()
 const port = process.env.PORT || 8080
+
+
+
+app.use(express.static('tmp'))
+
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+    cb(null, './tmp/')
+    },
+    filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname)
+    }
+    });
+const upload = multer({ storage })
+     
+app.use(cors());
+app.post('/upload', upload.single('image'), (req, res) => {
+    if (req.file){
+        index.updateIndex()
+        res.json({
+        imageUrl: `uploads/${req.file.filename}`
+        });
+    }
+    else 
+    res.status("409").json("No Files to Upload.");
+});
+
 
 app.set('port',port);
 app.use(express.json())

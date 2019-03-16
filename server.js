@@ -66,6 +66,11 @@ app.get('/search/:query',(req,res) => {
             }
         })
     }
+    //Clear '"' characters
+    seder.forEach((word,i) => {
+        seder[i]=word.replace(new RegExp('"', 'g'), "")
+        console.log(word)
+    })
     //opNot contains: all documents which are to be ignored
     //opAnd contains: the only documents to be displayed
     let opNot = []

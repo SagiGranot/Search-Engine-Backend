@@ -159,11 +159,11 @@ app.get('/view/:id/:query',(req,res) => {
     let data = fs.readFileSync(SRC_DIR+'/'+id, 'utf-8')
     let temp = query.toString().toLowerCase()
     let seder = temp.match(/[a-zA-Z]+/g)
-    console.log(seder)
     seder.forEach(term => {
-        data = data.replace(term,"<b>"+term+"</b>")
+        data = data.replace(new RegExp(term, 'g'), "<b><u>"+term+"</b></u>")
     })
-    res.send(data)
+    let j = {body: data}
+    res.json(j)
 })
 
 

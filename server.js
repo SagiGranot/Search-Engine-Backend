@@ -233,18 +233,18 @@ app.get('/search/:query',(req,res) => {
     query = queryPriority(query)
     query.forEach(term => {
         console.log(term)
-        results.push(search(term))
+        results = [...search(term)]
     })
 
 
-    // for(let i=0; i<results.length; ++i) {
-    //     for(let j=i+1; j<results.length; ++j) {
-    //         if(results[i].id === results[j].id){
-    //             results[i].weight += results[j].weight
-    //             results.splice(j--, 1)
-    //         }
-    //     }
-    // }
+    for(let i=0; i<results.length; ++i) {
+        for(let j=i+1; j<results.length; ++j) {
+            if(results[i].id === results[j].id){
+                results[i].weight += results[j].weight
+                results.splice(j--, 1)
+            }
+        }
+    }
 
 
     res.json(results)

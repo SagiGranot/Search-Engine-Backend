@@ -69,7 +69,6 @@ app.get('/search/:query',(req,res) => {
     //Clear '"' characters
     seder.forEach((word,i) => {
         seder[i]=word.replace(new RegExp('"', 'g'), "")
-        console.log(word)
     })
     //opNot contains: all documents which are to be ignored
     //opAnd contains: the only documents to be displayed
@@ -115,8 +114,6 @@ app.get('/search/:query',(req,res) => {
                 opAnd.splice(j--, 1);
         }
     }
-    console.log(opAnd)
-    console.log(opNot)
     //Build results array
     let results = []
     seder.forEach(term => {
@@ -174,6 +171,16 @@ app.get('/search/:query',(req,res) => {
 
         })
     }
+    //Clear disable documents
+    results.forEach((result, i) => {
+        index.disable.forEach((dis) => {
+            if(result.id === dis){
+                results.splice(i,1)
+                console.log(dis +"was removed")
+            }
+        })
+    })
+
     //Sort results by weight
     results.sort((a,b) => {
         if(a.weight > b.weight)
@@ -199,6 +206,31 @@ app.get('/view/:id/:query',(req,res) => {
     })
     let j = {body: data}
     res.json(j)
+})
+
+app.get('/disable/:id', (req,res) => {
+    const { id = null } = req.params
+    let exists = false
+    index.disable.forEach((dis) => {
+        if(id === dis){
+            exists = true
+        }
+    })
+    if (!exists)
+        index.disable.push(id)
+    console.log(index.disable)
+    res.send("ok")
+})
+
+app.get('/enable/:id', (req,res) => {
+    const { id = null } = req.params
+    index.disable.forEach((x, i) => {
+        if(x === id){
+            index.disable.splice(i,1)
+        }
+    })
+    console.log(index.disable)
+    res.send("ok")
 })
 
 

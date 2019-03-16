@@ -8,6 +8,7 @@ module.exports = class indexFile{
     constructor(){
         this.map = new hashmap()
         this.words = [];
+        this.disable = [];
         this.summaries = [];
         this.docID = 1000;
     }
@@ -74,11 +75,11 @@ module.exports = class indexFile{
                     //all duplicated words are converted into one object
                     //this object has (per word)  - #of docs and locations array
                 counter++ 
-                array.push({id: this.words[y].id, tf: this.words[y].tf, disabled: false})
+                array.push({id: this.words[y].id, tf: this.words[y].tf})
                 y++
                 }
             }
-            array.push({id: this.words[y].id, tf: this.words[y].tf, disabled: false})
+            array.push({id: this.words[y].id, tf: this.words[y].tf})
             let N = this.docID - 1000
             let Weight =  this.words[i]._tf * (Math.log(N/counter)) // (_tf * idf)
             this.map.set(this.words[i].term, {weight: Weight, docs: counter, locations:array})
@@ -93,7 +94,7 @@ module.exports = class indexFile{
            let obj = this.map.get(this.words[i].term)
            if(obj){
                 obj.docs++
-                obj.locations.push({id: this.words[i].id, tf: this.words[i].tf, disabled: false})
+                obj.locations.push({id: this.words[i].id, tf: this.words[i].tf})
            } 
            else{
                 let N = this.docID - 1000
